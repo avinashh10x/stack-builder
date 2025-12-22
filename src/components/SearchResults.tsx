@@ -1,9 +1,16 @@
-import { Package, Plus, Check, ExternalLink, Download, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useBasketStore, Tool } from '@/store/basketStore';
-import { toast } from 'sonner';
-import { categories } from '@/data/toolsData';
+import {
+  Package,
+  Plus,
+  Check,
+  ExternalLink,
+  Download,
+  Star,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useBasketStore, Tool } from "@/store/basketStore";
+import { toast } from "sonner";
+import { categories } from "@/data/toolsData";
 
 export interface SearchResult {
   name: string;
@@ -23,12 +30,17 @@ interface SearchResultsProps {
   onClose: () => void;
 }
 
-export function SearchResults({ results, query, isLoading, onClose }: SearchResultsProps) {
+export function SearchResults({
+  results,
+  query,
+  isLoading,
+  onClose,
+}: SearchResultsProps) {
   const { addTool, hasTool } = useBasketStore();
 
   const handleAddToStack = (result: SearchResult) => {
-    const toolId = result.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
-    
+    const toolId = result.name.toLowerCase().replace(/[^a-z0-9]/g, "-");
+
     if (hasTool(toolId)) {
       toast.info(`${result.name} is already in your stack`);
       return;
@@ -38,7 +50,7 @@ export function SearchResults({ results, query, isLoading, onClose }: SearchResu
       id: toolId,
       name: result.name,
       description: result.description,
-      category: result.category || 'utilities',
+      category: result.category || "utilities",
       installCommand: result.installCommand,
       docsUrl: result.docsUrl || `https://www.npmjs.com/package/${result.name}`,
     };
@@ -50,9 +62,9 @@ export function SearchResults({ results, query, isLoading, onClose }: SearchResu
   };
 
   const getCategoryName = (categoryId?: string) => {
-    if (!categoryId) return 'Utilities';
-    const category = categories.find(c => c.id === categoryId);
-    return category?.name || 'Utilities';
+    if (!categoryId) return "Utilities";
+    const category = categories.find((c) => c.id === categoryId);
+    return category?.name || "Utilities";
   };
 
   const formatDownloads = (downloads?: number) => {
@@ -65,14 +77,14 @@ export function SearchResults({ results, query, isLoading, onClose }: SearchResu
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-background">
       {/* Header */}
-      <div className="p-4 border-b border-border bg-card">
+      <div className="p-3 border-b border-border bg-card">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-foreground">
               Search Results for "{query}"
             </h2>
             <p className="text-sm text-muted-foreground">
-              {isLoading ? 'Searching...' : `${results.length} packages found`}
+              {isLoading ? "Searching..." : `${results.length} packages found`}
             </p>
           </div>
           <Button variant="outline" size="sm" onClick={onClose}>
@@ -93,7 +105,9 @@ export function SearchResults({ results, query, isLoading, onClose }: SearchResu
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="font-medium text-foreground mb-1">No packages found</h3>
+            <h3 className="font-medium text-foreground mb-1">
+              No packages found
+            </h3>
             <p className="text-sm text-muted-foreground">
               Try a different search term
             </p>
@@ -101,15 +115,17 @@ export function SearchResults({ results, query, isLoading, onClose }: SearchResu
         </div>
       ) : (
         <ScrollArea className="flex-1">
-          <div className="p-4 grid sm:grid-cols-2 gap-4">
+          <div className="p-3 grid md:grid-cols-2 gap-3">
             {results.map((result, index) => {
-              const toolId = result.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+              const toolId = result.name
+                .toLowerCase()
+                .replace(/[^a-z0-9]/g, "-");
               const isInStack = hasTool(toolId);
 
               return (
                 <div
                   key={`${result.name}-${index}`}
-                  className="group border border-border rounded-xl p-4 bg-card hover:border-primary/50 hover:shadow-lg transition-all duration-200 animate-fade-in"
+                  className="group border border-border rounded-lg p-3 bg-card hover:border-primary/50 hover:shadow-lg transition-all duration-200 animate-fade-in"
                   style={{ animationDelay: `${index * 30}ms` }}
                 >
                   <div className="flex items-start justify-between gap-3 mb-3">
@@ -151,7 +167,7 @@ export function SearchResults({ results, query, isLoading, onClose }: SearchResu
                     </Button>
                   </div>
 
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
                     {result.description}
                   </p>
 
@@ -178,7 +194,7 @@ export function SearchResults({ results, query, isLoading, onClose }: SearchResu
                     )}
                   </div>
 
-                  <div className="mt-3 pt-3 border-t border-border">
+                  <div className="mt-2 pt-2 border-t border-border">
                     <code className="text-xs bg-muted px-2 py-1 rounded font-mono text-muted-foreground block truncate">
                       {result.installCommand}
                     </code>

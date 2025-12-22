@@ -1,25 +1,117 @@
-import { useState } from 'react';
-import { Header } from '@/components/Header';
-import { CategoryList } from '@/components/CategoryList';
-import { ToolCard } from '@/components/ToolCard';
-import { SearchBar } from '@/components/SearchBar';
-import { SearchResults, SearchResult } from '@/components/SearchResults';
-import { Basket } from '@/components/Basket';
-import { OutputPanel } from '@/components/OutputPanel';
-import { tools, categories } from '@/data/toolsData';
+import React, { useEffect, useRef, useState } from "react";
+import { Header } from "@/components/Header";
+import LeftSidebar from "@/pages/layout/left/LeftSidebar";
+import RightSidebar from "@/pages/layout/right/RightSidebar";
+import MainContent from "@/pages/layout/shared/MainContent";
+import { tools, categories } from "@/data/toolsData";
 
-const CreateStack = () => {
-  const [activeCategory, setActiveCategory] = useState('frameworks');
+const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
+
+const LG_QUERY = "(min-width: 1024px)";
+const MD_QUERY = "(min-width: 768px)";
+
+export default function CreateStack() {
+  const [activeCategory, setActiveCategory] = useState<string>("frameworks");
   const [searchMode, setSearchMode] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
-  const filteredTools = tools.filter((tool) => tool.category === activeCategory);
+  // responsive flags
+  const [isLg, setIsLg] = useState<boolean>(
+    () => window.matchMedia(LG_QUERY).matches
+  );
+  const [isMd, setIsMd] = useState<boolean>(
+    () => window.matchMedia(MD_QUERY).matches
+  );
+
+  // sidebar sizes
+  const [leftWidth, setLeftWidth] = useState<number>(224);
+  const [rightWidth, setRightWidth] = useState<number>(320);
+
+  // right vertical split (percentage)
+  const [rightTopPct, setRightTopPct] = useState<number>(50);
+
+  // mobile right panel
+  const [mobileRightOpen, setMobileRightOpen] = useState(false);
+  const [mobileRightTab, setMobileRightTab] = useState<"stack" | "commands">(
+    "stack"
+  );
+
+  const rightRef = useRef<HTMLDivElement | null>(null);
+  const activeResizeRef = useRef<null | "left" | "right" | "vertical">(null);
+  const rafRef = useRef<number | null>(null);
+
+  const filteredTools = tools.filter((t) => t.category === activeCategory);
   const activeCategoryData = categories.find((c) => c.id === activeCategory);
 
-  const handleSearchSubmit = (query: string, results: SearchResult[]) => {
-    setSearchQuery(query);
+  useEffect(() => {
+    const lgM = window.matchMedia(LG_QUERY);
+    const mdM = window.matchMedia(MD_QUERY);
+    const onLg = () => setIsLg(lgM.matches);
+    const onMd = () => setIsMd(mdM.matches);
+    lgM.addEventListener("change", onLg);
+    mdM.addEventListener("change", onMd);
+    onLg();
+    onMd();
+    return () => {
+      lgM.removeEventListener("change", onLg);
+      mdM.removeEventListener("change", onMd);
+    };
+  }, []);
+
+  // Pointer based resize handlers (supports touch + mouse)
+  useEffect(() => {
+    const onPointerMove = (e: PointerEvent) => {
+      if (rafRef.current) return;
+      rafRef.current = window.requestAnimationFrame(() => {
+        rafRef.current = null;
+        const active = activeResizeRef.current;
+        if (!active) return;
+        if (active === "left") {
+          const x = e.clientX;
+          setLeftWidth(clamp(x, 180, 400));
+        } else if (active === "right") {
+          const x = e.clientX;
+          setRightWidth(clamp(window.innerWidth - x, 280, 600));
+        } else if (active === "vertical") {
+          const rect = rightRef.current?.getBoundingClientRect();
+          if (!rect) return;
+          const rel = e.clientY - rect.top;
+          setRightTopPct(clamp((rel / rect.height) * 100, 20, 80));
+        }
+      });
+    };
+
+    const onPointerUp = () => {
+      activeResizeRef.current = null;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  const startResize = (
+    type: "left" | "right" | "vertical",
+    e: React.PointerEvent
+  ) => {
+    e.preventDefault();
+    activeResizeRef.current = type;
+    document.body.style.cursor =
+      type === "vertical" ? "row-resize" : "col-resize";
+    document.body.style.userSelect = "none";
+    (e.currentTarget as Element)?.setPointerCapture?.(e.pointerId);
+  };
+
+  const handleSearchSubmit = (q: string, results: SearchResult[]) => {
+    setSearchQuery(q);
     setSearchResults(results);
     setSearchMode(true);
     setIsSearching(false);
@@ -27,7 +119,7 @@ const CreateStack = () => {
 
   const handleCloseSearch = () => {
     setSearchMode(false);
-    setSearchQuery('');
+    setSearchQuery("");
     setSearchResults([]);
   };
 
@@ -35,104 +127,41 @@ const CreateStack = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Panel - Categories & Tools */}
-        <div className="flex-1 flex overflow-hidden">
-          {/* Categories Sidebar - Hide when in search mode */}
-          {!searchMode && (
-            <aside className="w-56 shrink-0 border-r border-border bg-card overflow-y-auto hidden lg:block">
-              <div className="p-4">
-                <CategoryList
-                  activeCategory={activeCategory}
-                  onCategoryChange={setActiveCategory}
-                />
-              </div>
-            </aside>
-          )}
+      <div className="flex-1 flex overflow-hidden relative">
+        <LeftSidebar
+          leftWidth={leftWidth}
+          onStartResize={(e) => startResize("left", e)}
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
+        />
 
-          {/* Tools/Search Area */}
-          <main className="flex-1 flex flex-col overflow-hidden">
-            {/* Search */}
-            <div className="p-4 border-b border-border">
-              <SearchBar onSearchSubmit={handleSearchSubmit} />
-            </div>
+        <MainContent
+          isLg={isLg}
+          isMd={isMd}
+          leftWidth={leftWidth}
+          rightWidth={rightWidth}
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+          searchMode={searchMode}
+          searchQuery={searchQuery}
+          searchResults={searchResults}
+          isSearching={isSearching}
+          onSearchSubmit={handleSearchSubmit}
+          onCloseSearch={handleCloseSearch}
+        />
 
-            {searchMode ? (
-              /* Search Results View */
-              <SearchResults
-                results={searchResults}
-                query={searchQuery}
-                isLoading={isSearching}
-                onClose={handleCloseSearch}
-              />
-            ) : (
-              <>
-                {/* Mobile Categories */}
-                <div className="lg:hidden px-4 py-3 border-b border-border overflow-x-auto">
-                  <div className="flex gap-2">
-                    {categories.map((category) => (
-                      <button
-                        key={category.id}
-                        onClick={() => setActiveCategory(category.id)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                          activeCategory === category.id
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted text-muted-foreground hover:text-foreground'
-                        }`}
-                      >
-                        {category.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Category Header */}
-                <div className="px-4 py-4 border-b border-border bg-muted/30">
-                  <h2 className="text-lg font-semibold text-foreground">
-                    {activeCategoryData?.name}
-                  </h2>
-                  <p className="text-sm text-muted-foreground">
-                    {activeCategoryData?.description}
-                  </p>
-                </div>
-
-                {/* Tools Grid */}
-                <div className="flex-1 overflow-y-auto p-4">
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    {filteredTools.map((tool, index) => (
-                      <div
-                        key={tool.id}
-                        className="animate-fade-in"
-                        style={{ animationDelay: `${index * 50}ms` }}
-                      >
-                        <ToolCard tool={tool} />
-                      </div>
-                    ))}
-                  </div>
-
-                  {filteredTools.length === 0 && (
-                    <div className="text-center py-12 text-muted-foreground">
-                      No tools in this category yet.
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </main>
-        </div>
-
-        {/* Right Panel - Basket & Output (Always Visible) */}
-        <aside className="w-80 shrink-0 border-l border-border bg-card flex flex-col hidden md:flex">
-          <div className="h-1/2 border-b border-border overflow-hidden">
-            <Basket />
-          </div>
-          <div className="h-1/2 overflow-hidden">
-            <OutputPanel />
-          </div>
-        </aside>
+        <RightSidebar
+          rightRef={rightRef}
+          rightWidth={rightWidth}
+          rightTopPct={rightTopPct}
+          onStartResizeRight={(e) => startResize("right", e)}
+          onStartResizeVertical={(e) => startResize("vertical", e)}
+          mobileRightOpen={mobileRightOpen}
+          setMobileRightOpen={setMobileRightOpen}
+          mobileRightTab={mobileRightTab}
+          setMobileRightTab={setMobileRightTab}
+        />
       </div>
     </div>
   );
-};
-
-export default CreateStack;
+}

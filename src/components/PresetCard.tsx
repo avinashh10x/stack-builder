@@ -50,9 +50,9 @@ export function PresetCard({ preset, showAction = true }: PresetCardProps) {
             {tool.name}
           </span>
         ))}
-        {presetTools.length > 5 && (
+        {presetTools.length > 8 && (
           <span className="px-2 py-1 text-xs font-medium bg-muted text-muted-foreground rounded-md">
-            +{presetTools.length - 5} more
+            +{presetTools.length - 8} more
           </span>
         )}
       </div>

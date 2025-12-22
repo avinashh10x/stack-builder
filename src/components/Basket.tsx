@@ -7,7 +7,7 @@ export function Basket() {
   const { tools, removeTool, clearBasket } = useBasketStore();
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col ">
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-2">
           <ShoppingCart className="h-5 w-5 text-primary" />
