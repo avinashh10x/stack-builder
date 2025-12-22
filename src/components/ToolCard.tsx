@@ -1,6 +1,7 @@
 import { Plus, Check, ExternalLink } from 'lucide-react';
 import { Tool, useBasketStore } from '@/store/basketStore';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 interface ToolCardProps {
   tool: Tool;
@@ -13,8 +14,12 @@ export function ToolCard({ tool }: ToolCardProps) {
   const handleToggle = () => {
     if (isInBasket) {
       removeTool(tool.id);
+      toast.info(`${tool.name} removed from stack`);
     } else {
       addTool(tool);
+      toast.success(`${tool.name} added to stack!`, {
+        description: tool.installCommand,
+      });
     }
   };
 
