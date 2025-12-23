@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap } from "lucide-react";
 import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 function Hero() {
@@ -120,13 +121,47 @@ function Hero() {
             <span>Stop Googling, Start Building</span>
           </div>
 
-          <h1
-            className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 animate-fade-in"
-            style={{ animationDelay: "100ms" }}
+          <motion.h1
+            className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.35 }}
+            transition={{ delay: 0.05 }}
+            variants={{
+              hidden: {},
+              visible: {},
+            }}
           >
-            Your Tech Stack,{" "}
-            <span className="text-gradient">One Click Away</span>
-          </h1>
+            <motion.span
+              className="inline-block"
+              initial={{ y: 28, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: false, amount: 0.35 }}
+              transition={{
+                type: "spring",
+                stiffness: 120,
+                damping: 18,
+                duration: 1,
+              }}
+            >
+             Built for Developers Who
+            </motion.span>{" "}
+            <motion.span
+              className="inline-block text-gradient"
+              initial={{ y: 32, opacity: 0, scale: 0.98 }}
+              whileInView={{ y: 0, opacity: 1, scale: 1 }}
+              viewport={{ once: false, amount: 0.35 }}
+              transition={{
+                type: "spring",
+                stiffness: 110,
+                damping: 16,
+                duration: 1,
+                delay: 0.06,
+              }}
+            >
+              Value Their Time.
+            </motion.span>
+          </motion.h1>
 
           <p
             className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto animate-fade-in"
