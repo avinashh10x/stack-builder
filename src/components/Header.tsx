@@ -13,10 +13,10 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full glass border-b border-border/50">
       <div className=" flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="flex items-center justify-center h-9 w-9 rounded-xl bg-primary text-primary-foreground shadow-glow transition-all group-hover:shadow-glow-lg">
-            <Package className="h-5 w-5" />
+          <div className="flex items-center justify-center h-9 w-9 rounded-xl bg-transparent text-primary-foreground shadow-glow transition-all group-hover:shadow-glow-lg">
+            <Package className="h-5 w-5 text-foreground" />
           </div>
-          <span className="text-xl font-bold tracking-tight">Beenzod</span>
+          <span className="text-xl font-bold tracking-tight">Stacky</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">

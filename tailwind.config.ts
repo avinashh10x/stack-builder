@@ -2,7 +2,12 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -13,9 +18,22 @@ export default {
       },
     },
     extend: {
+      keyframes: {
+        blob: {
+          "0%": { transform: "translate(0px,0px) scale(1)" },
+          "25%": { transform: "translate(50px,-30px) scale(1.1)" },
+          "50%": { transform: "translate(-40px,-10px) scale(0.95)" },
+          "75%": { transform: "translate(-20px,40px) scale(1.05)" },
+          "100%": { transform: "translate(0px,0px) scale(1)" },
+        },
+      },
+      animation: {
+        blob: "blob 800 ease-in-out infinite",
+      },
+
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: ["Inter", "system-ui", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -102,9 +120,9 @@ export default {
         "bounce-subtle": "bounce-subtle 2s ease-in-out infinite",
       },
       boxShadow: {
-        'glow': '0 0 40px hsl(217 91% 60% / 0.15)',
-        'glow-lg': '0 0 60px hsl(217 91% 60% / 0.2)',
-        'card': '0 1px 3px hsl(217 91% 11% / 0.05), 0 1px 2px -1px hsl(217 91% 11% / 0.05)',
+        glow: "0 0 40px hsl(217 91% 60% / 0.15)",
+        "glow-lg": "0 0 60px hsl(217 91% 60% / 0.2)",
+        card: "0 1px 3px hsl(217 91% 11% / 0.05), 0 1px 2px -1px hsl(217 91% 11% / 0.05)",
       },
     },
   },

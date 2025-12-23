@@ -1,15 +1,117 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap } from "lucide-react";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
 function Hero() {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const blobRefs = useRef<Array<HTMLDivElement | null>>([]);
+
+  useEffect(() => {
+    const num = 3;
+    const maxOffset = 80; // max px offset from initial position
+
+    const positions: { x: number; y: number }[] = Array.from(
+      { length: num },
+      () => ({ x: 0, y: 0 })
+    );
+    const velocities: { x: number; y: number }[] = Array.from(
+      { length: num },
+      () => ({ x: (Math.random() - 0.5) * 0.8, y: (Math.random() - 0.5) * 0.8 })
+    );
+
+    const initPositions = () => {
+      blobRefs.current.forEach((el, i) => {
+        if (!el) return;
+        // reset transform so getBoundingClientRect is stable
+        el.style.transform = `translate(0px, 0px)`;
+        positions[i] = { x: 0, y: 0 };
+        velocities[i] = {
+          x: (Math.random() - 0.5) * 0.8,
+          y: (Math.random() - 0.5) * 0.8,
+        };
+      });
+    };
+
+    let raf = 0;
+
+    function step() {
+      blobRefs.current.forEach((el, i) => {
+        if (!el) return;
+
+        // small random acceleration
+        velocities[i].x += (Math.random() - 0.5) * 0.06;
+        velocities[i].y += (Math.random() - 0.5) * 0.06;
+
+        // clamp velocity
+        velocities[i].x = Math.max(-3, Math.min(3, velocities[i].x));
+        velocities[i].y = Math.max(-3, Math.min(3, velocities[i].y));
+
+        positions[i].x += velocities[i].x;
+        positions[i].y += velocities[i].y;
+
+        // bounce within bounds
+        if (positions[i].x > maxOffset) {
+          positions[i].x = maxOffset;
+          velocities[i].x *= -0.8;
+        }
+        if (positions[i].x < -maxOffset) {
+          positions[i].x = -maxOffset;
+          velocities[i].x *= -0.8;
+        }
+        if (positions[i].y > maxOffset) {
+          positions[i].y = maxOffset;
+          velocities[i].y *= -0.8;
+        }
+        if (positions[i].y < -maxOffset) {
+          positions[i].y = -maxOffset;
+          velocities[i].y *= -0.8;
+        }
+
+        // apply transform
+        el.style.transform = `translate(${positions[i].x}px, ${positions[i].y}px)`;
+      });
+
+      raf = requestAnimationFrame(step);
+    }
+
+    initPositions();
+    raf = requestAnimationFrame(step);
+
+    const onResize = () => initPositions();
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <section className="relative overflow-hidden h-screen border-b border-border">
       {/* Background decoration */}
       <div className="absolute inset-0 gradient-subtle" />
-      <div className="absolute top-20 left-1/4 w-96 h-96  bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+
+      <div ref={containerRef} className="absolute inset-0" />
+
+      {/* moving decorative blobs */}
+      <div
+        ref={(el) => (blobRefs.current[0] = el)}
+        className="absolute top-20 left-1/4 w-96 h-96 bg-primary/30 rounded-full blur-3xl"
+        style={{ willChange: "transform" }}
+      />
+
+      <div
+        ref={(el) => (blobRefs.current[1] = el)}
+        className="absolute top-1/3 right-1/3 w-72 h-72 bg-secondary/50 rounded-full blur-xl"
+        style={{ willChange: "transform" }}
+      />
+
+      <div
+        ref={(el) => (blobRefs.current[2] = el)}
+        className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl"
+        style={{ willChange: "transform" }}
+      />
 
       <div className="relative container mx-auto px-4 py-10 md:py-32 h-full ">
         <div className="max-w-3xl mx-auto text-center">
