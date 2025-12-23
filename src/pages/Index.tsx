@@ -7,9 +7,8 @@ import { presets } from "@/data/toolsData";
 import Footer from "@/components/Footer";
 import CTA from "./sections/CTA";
 import PresetPreview from "./sections/PresetPreview";
-import Features from "./sections/features";
+import Features from "./sections/Features";
 import Hero from "./sections/Hero";
-import Text3d from "./sections/3dText";import LionWindScene from "./sections/3dText";
 
 const Index = () => {
   return (
@@ -28,7 +27,6 @@ const Index = () => {
       {/* CTA Section */}
       <CTA />
 
-      
       {/* Footer */}
       <Footer />
     </div>
