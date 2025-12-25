@@ -45,7 +45,7 @@ export const MainContent: React.FC<Props> = ({
       }}
     >
       <main className="flex-1 flex flex-col overflow-hidden">
-        <div className="p-4 border-b border-border">
+        <div className="p-4">
           <SearchBar onSearchSubmit={onSearchSubmit} />
         </div>
 
@@ -76,13 +76,18 @@ export const MainContent: React.FC<Props> = ({
               </div>
             </div>
 
-            <div className="px-4 py-4 border-b border-border bg-muted/30">
-              <h2 className="text-lg font-semibold text-foreground">
+          
+
+            <div className="px-4 py-4 ">
+              <h2 className="text-lg font-semibold text-foreground ">
                 {activeCategoryData?.name}
               </h2>
               <p className="text-sm text-muted-foreground">
                 {activeCategoryData?.description}
               </p>
+            </div>
+            <div className="px-4">
+              <div className="h-px bg-border/40 mt-4" />
             </div>
 
             <div className="flex-1 overflow-y-auto p-4">

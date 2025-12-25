@@ -77,7 +77,7 @@ export function SearchResults({
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-background">
       {/* Header */}
-      <div className="p-3 border-b border-border bg-card">
+      <div className="p-3 ">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-foreground">
@@ -93,6 +93,9 @@ export function SearchResults({
         </div>
       </div>
 
+      <div className="px-4">
+        <div className="h-px bg-border/60 my-3" />
+      </div>
       {/* Results */}
       {isLoading ? (
         <div className="flex-1 flex items-center justify-center">

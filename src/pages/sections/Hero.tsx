@@ -93,7 +93,7 @@ function Hero() {
       {/* Background decoration */}
       <div className="absolute inset-0 gradient-subtle" />
 
-      <div ref={containerRef} className="absolute inset-0" />
+      <div ref={containerRef} className="absolute inset-0 " />
 
       {/* moving decorative blobs */}
       <div
@@ -114,7 +114,7 @@ function Hero() {
         style={{ willChange: "transform" }}
       />
 
-      <div className="relative container mx-auto px-4 py-10 md:py-32 h-full ">
+      <div className="relative container flex items-center justify-center h-full ">
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-medium mb-8 animate-fade-in">
             <Zap className="h-4 w-4" />
@@ -144,7 +144,7 @@ function Hero() {
                 duration: 1,
               }}
             >
-             Built for Developers Who
+             Built for Developers
             </motion.span>{" "}
             <motion.span
               className="inline-block text-gradient"
@@ -159,7 +159,7 @@ function Hero() {
                 delay: 0.06,
               }}
             >
-              Value Their Time.
+            who value their time
             </motion.span>
           </motion.h1>
 

@@ -28,7 +28,7 @@ export default {
         },
       },
       animation: {
-        blob: "blob 800 ease-in-out infinite",
+        blob: "blob 300ms ease-in-out infinite",
       },
 
       fontFamily: {

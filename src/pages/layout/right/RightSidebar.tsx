@@ -1,7 +1,7 @@
 import React from "react";
 import { Basket } from "@/components/Basket";
 import { OutputPanel } from "@/components/OutputPanel";
-import {  ShoppingCart, X } from "lucide-react";
+import { ShoppingCart, X } from "lucide-react";
 
 type Props = {
   rightRef: React.RefObject<HTMLDivElement>;
@@ -37,11 +37,12 @@ export const RightSidebar: React.FC<Props> = ({
           role="separator"
           aria-orientation="vertical"
           onPointerDown={onStartResizeRight}
-          className="absolute top-0 left-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
+          className="absolute top-0 left-0 bottom-0 w-1 -ml-1 cursor-col-resize hover:bg-primary/50 transition-colors z-20"
+          style={{ backgroundClip: "padding-box" }}
         />
 
         <div
-          className="overflow-hidden border-b border-border relative"
+          className="overflow-hidden relative"
           style={{ height: `${rightTopPct}%` }}
         >
           <Basket />

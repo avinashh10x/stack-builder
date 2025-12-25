@@ -1,12 +1,13 @@
-import { useNavigate } from 'react-router-dom';
-import { presets } from '@/data/toolsData';
-import { tools } from '@/data/toolsData';
-import { useBasketStore } from '@/store/basketStore';
-import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
+import { presets } from "@/data/toolsData";
+import { tools } from "@/data/toolsData";
+import { useBasketStore } from "@/store/basketStore";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 
 interface PresetCardProps {
-  preset: typeof presets[0];
+  preset: (typeof presets)[0];
   showAction?: boolean;
 }
 
@@ -16,31 +17,33 @@ export function PresetCard({ preset, showAction = true }: PresetCardProps) {
 
   const handleApplyPreset = () => {
     applyPreset(preset, tools);
-    navigate('/create-stack');
+    navigate("/create-stack");
   };
 
   const presetTools = tools.filter((t) => preset.tools.includes(t.id));
 
   return (
-    <div className="group p-6 rounded-2xl border border-border bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+    <div
+      onClick={handleApplyPreset}
+     className="group p-6 rounded-2xl cursor-pointer border border-border bg-card flex flex-col justify-center items-center hover:border-primary/30 hover:shadow-lg transition-all duration-300">
       <div className="flex items-start justify-between mb-4">
-        <div className="text-4xl">{preset.icon}</div>
-        {showAction && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleApplyPreset}
-            className="opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            Use Preset
-            <ArrowRight className="ml-1 h-4 w-4" />
-          </Button>
-        )}
+        <div className="text-foreground">
+          {(() => {
+            const IconComponent = LucideIcons[
+              preset.icon as keyof typeof LucideIcons
+            ] as React.ComponentType<{ className?: string }> | undefined;
+            if (IconComponent) return <IconComponent className="h-8 w-8" />;
+            return <div className="text-4xl">{preset.icon}</div>;
+          })()}
+        </div>
+       
       </div>
-      
-      <h3 className="text-lg font-semibold text-foreground mb-2">{preset.name}</h3>
+
+      <h3 className="text-lg font-semibold text-foreground mb-2">
+        {preset.name}
+      </h3>
       <p className="text-sm text-muted-foreground mb-4">{preset.description}</p>
-      
+
       <div className="flex flex-wrap gap-2">
         {presetTools.slice(0, 5).map((tool) => (
           <span
