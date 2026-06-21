@@ -11,6 +11,9 @@ function Footer() {
             <span className="font-semibold">Stacky</span>
           </div>
           <p className="text-sm text-muted-foreground">
+            Built by <a href="https://x.com/avinash10x">Avinash</a>
+          </p>
+          <p className="text-sm text-muted-foreground">
             Built for developers who value their time.
           </p>
         </div>
